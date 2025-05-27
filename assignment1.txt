@@ -460,3 +460,76 @@ print(df.groupby('diagnosis_code')['claim_status'].mean().sort_values(ascending=
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+import numpy as np
+
+# ✅ Step 1: Encode target if needed
+if df['claim_status'].dtype == 'object':
+    le = LabelEncoder()
+    df['claim_status'] = le.fit_transform(df['claim_status'])
+
+# ✅ Step 2: Feature-target split
+X = df.drop(columns='claim_status')
+y = df['claim_status']
+
+# ✅ Step 3: Drop ID columns
+X = X.drop(columns=['claim_id', 'member_id', 'provider_id'], errors='ignore')
+
+# ✅ Step 4: Define column types
+numerical_cols = ['claim_amount', 'billed_amount', 'days_in_hospital', 'prior_claims', 'age']
+categorical_cols = [
+    'diagnosis_code', 'procedure_code', 'provider_type',
+    'gender', 'plan_type', 'network_status', 'service_type',
+    'authorization_required', 'authorization_obtained'
+]
+
+# ✅ Step 5: Separate numericals and categoricals
+X_num = X[numerical_cols].copy()
+X_cat = X[categorical_cols].copy()
+
+# ✅ Step 6: Scale numerical features
+scaler = StandardScaler()
+X_num_scaled = scaler.fit_transform(X_num)
+
+# ✅ Step 7: Encode categorical features
+encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+X_cat_encoded = encoder.fit_transform(X_cat)
+
+# ✅ Step 8: Combine processed features
+X_processed = np.hstack([X_num_scaled, X_cat_encoded])
+
+# ✅ Step 9: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_processed, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# ✅ Step 10: Train classifier
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# ✅ Step 11: Predict and evaluate
+y_pred = model.predict(X_test)
+
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
+
