@@ -751,3 +751,84 @@ denied_index = y_test[y_test == 1].index[0]
 print(f"\nExplanation for claim ID at test index {denied_index}:")
 shap.force_plot(explainer.expected_value, shap_values[0], X_test.iloc[0], matplotlib=True)
 
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import numpy as np
+from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.metrics import classification_report, confusion_matrix
+import shap
+
+# 🟩 Step 1: Label encode target: Approved=0, Denied=1
+df['claim_status'] = df['claim_status'].map({'Approved': 0, 'Denied': 1})
+
+# 🟩 Step 2: Define features and target
+X = df.drop(columns=['claim_status', 'claim_id', 'member_id', 'provider_id'], errors='ignore')
+y = df['claim_status']
+
+# 🟩 Step 3: Column definitions
+numerical_cols = ['claim_amount', 'billed_amount', 'days_in_hospital', 'prior_claims', 'age']
+categorical_cols = [
+    'diagnosis_code', 'procedure_code', 'provider_type',
+    'gender', 'plan_type', 'network_status', 'service_type',
+    'authorization_required', 'authorization_obtained'
+]
+
+# 🟩 Step 4: Manual preprocessing
+# --- Scale numeric
+scaler = StandardScaler()
+X_num = scaler.fit_transform(X[numerical_cols])
+
+# --- One-hot encode categorical
+encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+X_cat = encoder.fit_transform(X[categorical_cols])
+
+# --- Combine
+X_processed = np.hstack([X_num, X_cat])
+
+# Optional: feature names for SHAP
+feature_names = numerical_cols + list(encoder.get_feature_names_out(categorical_cols))
+
+# 🟩 Step 5: Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X_processed, y, test_size=0.2, stratify=y, random_state=42
+)
+
+# 🟩 Step 6: Train XGBoost model
+model = XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='logloss')
+model.fit(X_train, y_train)
+
+# 🟩 Step 7: Evaluate model
+y_pred = model.predict(X_test)
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# 🟩 Step 8: Predict probabilities for all claims
+X_all_num = scaler.transform(X[numerical_cols])
+X_all_cat = encoder.transform(X[categorical_cols])
+X_all_transformed = np.hstack([X_all_num, X_all_cat])
+
+denial_probs = model.predict_proba(X_all_transformed)[:, 1]
+df['denial_probability'] = denial_probs
+
+# 🟩 Step 9: Identify high-risk claims
+high_risk_claims = df[df['denial_probability'] > 0.80]
+print("Top high-risk claims:\n", high_risk_claims.head())
+
+# 🟩 Step 10: SHAP for explainability
+explainer = shap.Explainer(model, X_all_transformed, feature_names=feature_names)
+shap_values = explainer(X_all_transformed)
+
+# Bar plot of most important denial features
+shap.summary_plot(shap_values, features=X_all_transformed, feature_names=feature_names, plot_type="bar")
+
+
