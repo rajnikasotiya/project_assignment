@@ -895,3 +895,67 @@ grid_search = GridSearchCV(xgb, param_grid, cv=3, scoring='f1', verbose=1, n_job
 grid_search.fit(X_train, y_train)
 
 print("Best parameters for XGBoost:", grid_search.best_params_)
+
+
+
+
+
+# 📊 Executive Summary: Claims Data Insights
+
+## ✅ Data Quality
+- No missing values detected.
+- No duplicate records found.
+- Dataset is clean and ready for modeling.
+
+---
+
+## 📈 Feature Relationships & Distributions
+- `claim_amount` and `billed_amount` are **highly correlated**.
+  - 📌 Recommendation: Use one or derive a **claim-to-bill ratio**.
+- `days_in_hospital` is typically short:
+  - Most patients stay **1–2 days**, indicating low-complexity procedures.
+
+---
+
+## 🩺 Claim Outcomes
+- Majority of claims are **Approved**.
+  - ⚠️ Indicates **class imbalance** in the target (`claim_status`).
+  - 🔧 Requires:
+    - Class weight adjustments
+    - Oversampling (e.g., SMOTE)
+    - Evaluation via ROC-AUC, F1-score
+
+---
+
+## 🌐 Network Participation
+- Most claims are **In-Network**.
+  - May limit variability for `network_status`.
+  - Important to analyze the smaller **Out-of-Network** subset for higher denial risk.
+
+---
+
+## 🔐 Authorization Insights
+- Most patients **require authorization**, and it is usually **obtained**.
+- Denials often linked to:
+  - Required but **missing authorization**
+  - **Mismatch** between required vs. obtained fields
+
+---
+
+## 📌 Modeling Implications
+- Drop one of `claim_amount` or `billed_amount`, or use their ratio.
+- Address **class imbalance** with appropriate strategies.
+- Focus on engineered features:
+  - Claim-to-bill ratio
+  - Authorization mismatch
+  - Network status
+  - Provider type
+
+---
+
+## 🚀 Recommendation
+Use these insights to:
+- Enhance model interpretability and performance.
+- Focus on features linked to high denial risk.
+- Build robust logic for **flagging high-risk claims**.
+
