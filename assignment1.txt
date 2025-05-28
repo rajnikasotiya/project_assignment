@@ -959,3 +959,75 @@ Use these insights to:
 - Focus on features linked to high denial risk.
 - Build robust logic for **flagging high-risk claims**.
 
+
+
+
+
+
+Sure! Let's **compare the performance** of your **Logistic Regression** model (from the image) with the **XGBoost** model you trained.
+
+---
+
+### 🧠 **Logistic Regression Model Performance (from image)**
+
+From the confusion matrix:
+
+|                         | Predicted Approved (0) | Predicted Denied (1)  |
+| ----------------------- | ---------------------- | --------------------- |
+| **Actual Approved (0)** | 7150 (True Negative)   | 1992 (False Positive) |
+| **Actual Denied (1)**   | 164 (False Negative)   | 694 (True Positive)   |
+
+**Classification Metrics:**
+
+* **Accuracy**: `0.7844`
+* **Precision**: `0.258`
+* **Recall (Sensitivity)**: `0.808`
+* **ROC AUC**: `0.795`
+
+🧾 **Insights:**
+
+* **High recall**: The model catches most denials.
+* **Low precision**: Many false positives — approved claims predicted as denied.
+* Suitable when it's more important to catch denials, even at the cost of false alarms.
+
+---
+
+### ⚙️ **XGBoost Model Performance (fill in below)**
+
+Please provide the **confusion matrix and metrics for your XGBoost model** (or paste the classification report).
+
+However, a typical well-tuned XGBoost model would yield:
+
+| Metric    | Expected XGBoost Value                        |
+| --------- | --------------------------------------------- |
+| Accuracy  | \~0.82–0.88                                   |
+| Precision | Higher than logistic (\~0.35–0.50)            |
+| Recall    | Slightly lower or similar (e.g., \~0.75–0.85) |
+| ROC AUC   | \~0.85–0.90                                   |
+
+---
+
+### 📊 **Comparison Summary**
+
+| Metric    | Logistic Regression | XGBoost (Expected/Your Actual) |
+| --------- | ------------------- | ------------------------------ |
+| Accuracy  | 0.784               | ⬆️ Higher                      |
+| Precision | 0.258               | ⬆️ Significantly Higher        |
+| Recall    | 0.808               | ↔️ Similar or Slightly Lower   |
+| ROC AUC   | 0.795               | ⬆️ Higher                      |
+
+---
+
+### ✅ **When to Prefer Which?**
+
+| Use Case                                              | Recommended Model                    |
+| ----------------------------------------------------- | ------------------------------------ |
+| **Want to avoid missing denied claims (high recall)** | Logistic Regression or tuned XGBoost |
+| **Want more reliable denial predictions (precision)** | XGBoost                              |
+| **Overall performance and robustness**                | XGBoost                              |
+
+---
+
+If you share the XGBoost confusion matrix or report, I can update this with exact values and deeper insights.
+
+
