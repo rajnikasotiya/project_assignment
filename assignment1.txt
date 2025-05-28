@@ -1031,3 +1031,86 @@ However, a typical well-tuned XGBoost model would yield:
 If you share the XGBoost confusion matrix or report, I can update this with exact values and deeper insights.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 🔍 Model Comparison & Insights: Logistic Regression vs XGBoost
+
+Let’s analyze the performance of the **Logistic Regression** model (second image) and **XGBoost** model (first image) based on their confusion matrices and evaluation metrics.
+
+---
+
+### 📊 Confusion Matrices Summary:
+
+| Metric                   | Logistic Regression | XGBoost |
+| ------------------------ | ------------------- | ------- |
+| **True Positives (TP)**  | 694                 | 676     |
+| **False Positives (FP)** | 1992                | 1076    |
+| **False Negatives (FN)** | 164                 | 182     |
+| **True Negatives (TN)**  | 7150                | 8066    |
+
+---
+
+### 📈 Metric Comparison:
+
+| Metric        | Logistic Regression | XGBoost    | 🏆 Better             |
+| ------------- | ------------------- | ---------- | --------------------- |
+| **Accuracy**  | 0.7844              | **0.8742** | ✅ XGBoost             |
+| **Precision** | 0.2584              | **0.3858** | ✅ XGBoost             |
+| **Recall**    | **0.8089**          | 0.7879     | ✅ Logistic (slightly) |
+| **ROC AUC**   | 0.7955              | **0.8359** | ✅ XGBoost             |
+
+---
+
+### 🧠 Insights:
+
+1. **Overall Performance**:
+
+   * **XGBoost significantly outperforms Logistic Regression** in terms of accuracy, precision, and AUC.
+   * While Logistic Regression has a slightly higher recall, the difference is marginal (0.8089 vs 0.7879).
+
+2. **Precision vs Recall Trade-off**:
+
+   * Logistic Regression has high recall but low precision → catches more positives but includes more false alarms.
+   * XGBoost strikes a better balance, reducing false positives **substantially** while maintaining decent recall.
+
+3. **False Positives & Negatives**:
+
+   * XGBoost **reduces false positives by 916** (1992 → 1076) while only slightly increasing false negatives (164 → 182).
+   * This is a **valuable trade-off**, especially if false positives are costly (e.g., unnecessary claim investigations).
+
+4. **ROC AUC**:
+
+   * A higher ROC AUC in XGBoost (0.8359 vs 0.7955) means better discriminatory ability between the two classes.
+
+---
+
+### ✅ Recommendation:
+
+If your use case requires:
+
+* **Minimizing false positives** or improving **overall model confidence**, go with **XGBoost**.
+* **Maximizing recall** at the expense of more false positives, then **Logistic Regression** could be considered, though XGBoost is still quite close in recall.
+
+In general, **XGBoost is the better model here** for most practical applications due to its balanced and superior performance.
+
+Let me know if you want help tuning XGBoost further or analyzing feature importance.
+
+
