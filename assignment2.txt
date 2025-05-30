@@ -163,3 +163,53 @@ xgb_best = xgb_search.best_estimator_
 y_pred_xgb = xgb_best.predict(X_test_scaled)
 print("Test RMSE (XGBoost):", mean_squared_error(y_test, y_pred_xgb, squared=False))
 
+
+
+
+
+
+
+
+
+| Feature                   | Correlation with `InsurancePremium` | Interpretation                                                                              |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| **DeductibleAmount**      | **+0.54**                           | Strong positive relationship. As deductible increases, insurance premium tends to increase. |
+| **PreExistingConditions** | **+0.44**                           | Moderate positive correlation. More pre-existing conditions → higher premium.               |
+| **Age**                   | +0.16                               | Weak positive relationship. Older individuals pay slightly more on average.                 |
+| **BMI**                   | +0.13                               | Slight increase in premium with higher BMI.                                                 |
+| **NumberOfDependents**    | +0.14                               | Small effect: more dependents → slightly higher premium.                                    |
+| **YearsSinceLastClaim**   | **-0.13**                           | Weak negative correlation. More time since last claim → slightly lower premium.             |
+| **AnnualIncome**          | +0.05                               | Almost no impact on premium.                                                                |
+
+
+
+
+
+
+
+📊 Inter-feature Correlations
+
+These are mostly very weak or near zero, meaning:
+
+Low multicollinearity — good for models like linear regression.
+Features are mostly independent.
+Examples:
+
+BMI vs AnnualIncome: 0.00 → no relation.
+NumberOfDependents vs AnnualIncome: 0.01 → no relation.
+Age vs any feature: 0.00 or 0.01 → very little correlation
+
+
+
+
+
+
+
+
+
+| Metric                  | **Ridge Regression** | **XGBoost Regression** |
+| ----------------------- | -------------------- | ---------------------- |
+| **RMSE (CV)**           | 181.06               | **115.10** ✅           |
+| **Test RMSE**           | 182.96               | **112.98** ✅           |
+| **MSE**                 | 33,473.72            | **12,765.17** ✅        |
+| **R² Score (Training)** | 0.9316               | **0.9739** ✅           |
